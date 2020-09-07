@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+    - "3306:3306"
+    volumes:
+    - ${MYSQL_VOLUME:-mysql-volume}:/var/lib/mysql:Z
+    environment:
+    - MYSQL_USER=${MYSQL_USER}
+    - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    - MYSQL_DATABASE=${MYSQL_DB}
+
+  wordpress:
+    image: wordpress:${SVERSION}
+    depends_on:
+    - mysql
+    ports:
+    - "3000:80"
+    environment:
+    - WORDPRESS_DB_HOST=mysql:3306
+    - WORDPRESS_DB_USER=${MYSQL_USER}
+    - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+    - WORDPRESS_DB_NAME=${MYSQL_DB}
+
+volumes:
+  mysql-volume:
